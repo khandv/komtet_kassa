@@ -109,14 +109,12 @@ def get_checks_order(order_id):
     check_list = []
     for i in check_from_db:
         if i[2] is not None:
-            check_dict = {
-                'type_of_check': i[0],
-                'fd_number': i[2],
-                'number_in_shift': i[3],
-                'shift_number': i[4],
-                'date_time': i[5],
-                'total': i[6]
-            }
+            check_dict = {'type_of_check': i[0],
+                          'fd_number': i[2],
+                          'number_in_shift': i[3],
+                          'shift_number': i[4],
+                          'date_time': i[5],
+                          'total': i[6]}
             check_list.append(check_dict)
     return check_list
 
