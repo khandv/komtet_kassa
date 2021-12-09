@@ -1,12 +1,11 @@
 from datetime import datetime
+import settings
 import requests
 import json
 from datetime import datetime, timedelta
 
 debug = True
-_sb_login = 'shop-fsin_UK-7-api'
-_sb_password = 'hSZkaAMlvwZ1!3!9TIxE'
-_sb_URL = 'https://securepayments.sberbank.ru/payment/rest/'
+
 __debug = False
 payments = []
 pays = {}

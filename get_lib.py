@@ -115,4 +115,10 @@ def get_checks_order(order_id):
 
 
 if __name__ == '__main__':
-    pass
+    print(get_order_details(331587))
+    print(get_shop(get_order_details(331587)[8]))
+    print(get_region(get_shop(get_order_details(331587)[8])[1]))
+    print(get_email(331587))
+    print(get_status_order(331587))
+    print((get_sber_id(331587)))
+    print(get_checks_order(331941))
