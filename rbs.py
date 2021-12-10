@@ -1,11 +1,12 @@
 import settings
 import requests
+from pprint import pprint
 
 
-# запрос в сбер по id_sb (sber_id), возвращает результат в json. используется в bitrix.py
-def get_order_extended(id_sb):
+# запрос в сбер по sber_id
+def get_order_from_sber(sber_id):
     url = 'https://securepayments.sberbank.ru/payment/rest/getOrderStatusExtended.do'
-    params = {'orderId': id_sb,
+    params = {'orderId': sber_id,
               'userName': settings.sb_login,
               'password': settings.sb_password}
     req = requests.get(url, params=params)
@@ -24,4 +25,5 @@ def refund_order(order_id, amount):
 
 
 if __name__ == '__main__':
-    pass
+    pprint(get_order_from_sber('2bf23569-aa35-7292-a741-8612020c5ad7'))
+    print(get_order_from_sber('2bf23569-aa35-7292-a741-8612020c5ad7')['errorCode'] == '0')
