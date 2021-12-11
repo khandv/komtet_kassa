@@ -18,7 +18,6 @@ def configure_check(order_id, intent):
 
 
 
-
         mark_code_raws = get_lib.get_mark(good[-1])
 
 
