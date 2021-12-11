@@ -2,6 +2,7 @@ from settings import connection
 from pprint import pprint
 from _datetime import datetime
 
+
 # Получение списка заказов для пробития
 def get_orders_for_checks():
     sql = 'select order_id \
@@ -18,9 +19,9 @@ def get_orders_for_checks():
 # Получение деталей заказа
 def get_order_details(order_id):
     sql = f'SELECT order_id, FIO, FIO_RECIPIENT, RECIPIENT_BIRTH, \
-        DATE_ORDER, STATUS_ORDER, TEXT_CANCEL, TOTAL, ID_SHOP \
-        FROM u0752174_delfin_exchange.oc_order_starta \
-        where order_id = {order_id};'
+            DATE_ORDER, STATUS_ORDER, TEXT_CANCEL, TOTAL, ID_SHOP \
+            FROM u0752174_delfin_exchange.oc_order_starta \
+            where order_id = {order_id};'
     with connection():
         cursor = connection().cursor()
         cursor.execute(sql)
@@ -32,8 +33,8 @@ def get_order_details(order_id):
 # Получение магазина
 def get_shop(shop_id):
     sql = f'select name, parent_id \
-        from u0752174_delfin_exchange.oc_store_category \
-        where category_id = {shop_id};'
+            from u0752174_delfin_exchange.oc_store_category \
+            where category_id = {shop_id};'
     with connection():
         cursor = connection().cursor()
         cursor.execute(sql)
@@ -43,8 +44,8 @@ def get_shop(shop_id):
 # Получение региона
 def get_region(region_id):
     sql = f'select name \
-        from u0752174_delfin_exchange.oc_store_category \
-        where category_id = {region_id};'
+            from u0752174_delfin_exchange.oc_store_category \
+            where category_id = {region_id};'
     with connection():
         cursor = connection().cursor()
         cursor.execute(sql)
@@ -54,11 +55,11 @@ def get_region(region_id):
 # Получение адреса эл.почты покупателя из БД сайта
 def get_email(order_id):
     sql = f'select email \
-        from u0752174_fsin_new.b_user \
-        where id in \
-        (select user_id \
-        from u0752174_fsin_new.b_sale_order \
-        where ID = {order_id});'
+            from u0752174_fsin_new.b_user \
+            where id in \
+            (select user_id \
+            from u0752174_fsin_new.b_sale_order \
+            where ID = {order_id});'
     with connection():
         cursor = connection().cursor()
         cursor.execute(sql)
@@ -68,8 +69,8 @@ def get_email(order_id):
 # Получение статуса заказа из БД сайта
 def get_status_order(order_id):
     sql = f'SELECT STATUS_ID \
-        FROM u0752174_fsin_new.b_sale_order \
-        where ID = {order_id}'
+            FROM u0752174_fsin_new.b_sale_order \
+            where ID = {order_id}'
     with connection():
         cursor = connection().cursor()
         cursor.execute(sql)
@@ -85,8 +86,8 @@ def get_status_order(order_id):
 # Получение ID сбербанка из БД сайта (уникальный номер в системе)
 def get_sber_id(order_id):
     sql = f'SELECT value \
-        FROM u0752174_fsin_new.b_sale_order_props_value \
-        where ORDER_ID = {order_id} and ORDER_PROPS_ID = 10;'
+            FROM u0752174_fsin_new.b_sale_order_props_value \
+            where ORDER_ID = {order_id} and ORDER_PROPS_ID = 10;'
     with connection():
         cursor = connection().cursor()
         cursor.execute(sql)
@@ -149,7 +150,6 @@ def get_mark(product_guid):
         return cursor.fetchall()
 
 
-
 if __name__ == '__main__':
     # print(get_order_details(331587))
     # print(get_shop(get_order_details(331587)[8]))
@@ -158,7 +158,7 @@ if __name__ == '__main__':
     # print(get_status_order(331587))
     # print((get_sber_id(331587)))
     # print(get_checks_order(331941))
-    #print(get_order_id_by_sber_id('9a820daa-d4a9-7685-84f6-b327020c5ad7'))
-    #print(datetime.fromtimestamp(1639057669192 / 1000))
-    #pprint(get_goods_of_order(333802))
+    # print(get_order_id_by_sber_id('9a820daa-d4a9-7685-84f6-b327020c5ad7'))
+    # print(datetime.fromtimestamp(1639057669192 / 1000))
+    # pprint(get_goods_of_order(333802))
     pprint(get_mark('F08409FA-F0FE-4847-98C0-66258727C40A'))
