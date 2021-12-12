@@ -147,18 +147,24 @@ def get_mark(product_guid):
     with connection():
         cursor = connection().cursor()
         cursor.execute(sql)
-        return cursor.fetchall()
+        result = cursor.fetchall()
+        marks = list(list(res) for res in result)
+        for mark in marks:
+            if '/t' in mark[0]:
+                mark[0] = mark[0].replace('/t', '')
+
+        return marks
 
 
 if __name__ == '__main__':
     # print(get_order_details(331587))
     # print(get_shop(get_order_details(331587)[8]))
     # print(get_region(get_shop(get_order_details(331587)[8])[1]))
-    print(get_email(331587))
+    print(get_email(331579))
     # print(get_status_order(331587))
     # print((get_sber_id(331587)))
     # print(get_checks_order(331941))
     # print(get_order_id_by_sber_id('9a820daa-d4a9-7685-84f6-b327020c5ad7'))
     # print(datetime.fromtimestamp(1639057669192 / 1000))
     # pprint(get_goods_of_order(333802))
-    pprint(get_mark('F08409FA-F0FE-4847-98C0-66258727C40A'))
+    pprint(get_mark('C07BE6A6-B514-487C-B528-A68E929D28C0'))

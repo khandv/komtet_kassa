@@ -3,7 +3,7 @@ import hashlib
 import hmac
 import json
 from pprint import pprint
-from settings import shop_id, secret
+from settings import secret
 import requests
 
 
