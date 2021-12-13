@@ -24,22 +24,20 @@ def get_check_status(check_id):
     print(url)
     msg = 'GET' + url + ''
     signature = hmac.new(secret.encode('utf-8'), msg.encode('utf-8'), digestmod=hashlib.md5).hexdigest()
-    headers = {
-        'Content-type': 'application/json',
-        'Authorization': 'axTea5',
-        'X-HMAC-Signature': signature
-    }
+    headers = {'Content-type': 'application/json',
+               'Authorization': 'axTea5',
+               'X-HMAC-Signature': signature}
     a = json.loads(requests.get(url=url, headers=headers).content)
     print(a)
     print(a['state'])
-    print(a['fiscal_data']['rn'])
-    print(int(a['fiscal_data']['fp']))
-    print(int(a['fiscal_data']['i']))
-    print(int(int(a['fiscal_data']['shn'])))
-    print(int(a['fiscal_data']['fn']))
-    print(int(a['fiscal_data']['sh']))
-    print(a['fiscal_data']['t'])
-    print(float(a['fiscal_data']['s']))
+    # print(a['fiscal_data']['rn'])
+    # print(int(a['fiscal_data']['fp']))
+    # print(int(a['fiscal_data']['i']))
+    # print(int(int(a['fiscal_data']['shn'])))
+    # print(int(a['fiscal_data']['fn']))
+    # print(int(a['fiscal_data']['sh']))
+    # print(a['fiscal_data']['t'])
+    # print(float(a['fiscal_data']['s']))
 
     if a['state'] == 'done':
         # вытаскиваем инфу о чеке из ответа, формируем словарь res
@@ -75,6 +73,6 @@ def get_ofd_url(register_number, fn_number, doc_number, fpd):
 
 
 if __name__ == '__main__':
-    pprint(get_check_status(104500087))
+    pprint(get_check_status(106170874))
     # mark_code_raw = '(01)04610030141190(21)00004v9'
     # print(mark_to_tag(mark_code_raw))
