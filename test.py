@@ -1,6 +1,7 @@
 import hmac, hashlib
 import requests
 import json
+from settings import mysql_settings
 import pymysql
 
 # url = 'https://kassa.komtet.ru/api/shop/v1/'
@@ -29,6 +30,23 @@ def get_orders():
     orders = cursor.fetchall()
     return [x[0] for x in orders]
 
-print(get_orders())
+def add_check_db_full(ecr_reg_number, fpd, check_number,
+                      check_number_in_shift, shift_number,
+                      fn_number, check_date, total, check_url):
+    try:
+        connection = pymysql.connect(**mysql_settings)
+    except Exception as error:
+        print('Не удалось подключиться к БД\nОтвет сервера: ', error)
+    sql = f'update u0752174_delfin_exchange.Checks \
+            set ecr_reg_number = "{ecr_reg_number}", fpd = "{fpd}", fd_number = {check_number}, \
+            number_in_shift = {check_number_in_shift}, shift_number = {shift_number}, \
+            fn = "{fn_number}", date_time = {check_date.isoformat()}, total = {total}, \
+            url = "{check_url}" where check_id = "{check_id}"'
+    with connection:
+        cursor = connection.cursor()
+        cursor.execute(sql)
+        connection.commit()
+
+# print(get_orders())
 
 

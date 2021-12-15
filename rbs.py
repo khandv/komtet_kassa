@@ -13,7 +13,7 @@ def get_order_from_sber(sber_id):
     return req.json()
 
 
-# Запрос возврата средств оплаты заказа. используется в auto.py при возврате
+# Запрос возврата средств оплаты заказа. используетс при возврате
 def refund_order(order_id, amount):
     url = 'https://securepayments.sberbank.ru/payment/rest/refund.do'
     total = int(amount * 100)
