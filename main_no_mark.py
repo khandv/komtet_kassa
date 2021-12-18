@@ -12,14 +12,16 @@ def configure_check(order_id, intent):
     details = get_lib.get_order_details(order_id)
     goods = get_lib.get_goods_of_order(order_id)
     check = {'intent': intent,
-             'external_id': str(order_id) + '-' + intent + '-3',
+             'external_id': str(order_id) + '-' + intent + 'work',
              'sno': 0,
              'user': 'it-service@fguppromservis.ru' if test else get_lib.get_email(order_id),
              'positions': [],
              'payments': [{'sum': float(details[7]),
                            'type': 'card'}],
              'client': {'name': f'Заказ № {order_id}, {details[1]}', 'inn': ''},
-             'payment_address': 'https://fsin-shop.ru'}
+             'payment_address': 'https://fsin-shop.ru',
+             'additional_user_props':{'name': 'email отправителя',
+                                      'value': 'info@promservis.ru'}}
     sum_goods = 0
     for good in goods:
         if good[-1] != '':
@@ -57,49 +59,61 @@ def configure_check(order_id, intent):
     if sum_goods != details[7]:
         check['payments'][0]['sum'] = round(float(sum_goods), 2)
         print(f'Сумма чека: {details[7]}, сумма по товарам: {sum_goods}, будет пробита сумма по товарам')
-    # pprint(check)
+    pprint(f"В чеке {len(check['positions'])} позиции")
     return check
 
 
 # Пробиваем чеки, заносим данные в промежуточную базу
 def check_type(order_id, intent):
-    response = komtet.send_komtet(configure_check(order_id, intent))
-    result = response.json()
-    err = []
-    pprint(f'Результат: {result}')
-    try:
-        check_id = result['uuid']
-        komtet_id = result['id']
-        print(f'Заказ {order_id} принят без ошибки, komtet_id: {komtet_id}')
-        add_lib.add_check_db(str(order_id), check_id, intent)
-    except Exception:
-        error_massage = result['title']
-        check_id = result['task']['uuid']
-        komtet_id = result['task']['id']
-        print(f'Заказ {order_id} принят c ошибкой, {error_massage}, komtet_id: {komtet_id}')
-        add_lib.add_check_db(str(order_id), check_id, intent, error_massage)
+    check = configure_check(order_id, intent)
+    # pprint(check['positions'])
+    no_mark = True
+    for pos in check['positions']:
+        if 'nomenclature_code' in pos:
+            print(f'Марка в {pos["name"]}, {pos["nomenclature_code"]}')
+            no_mark = False
+        else:
+            print(f'Нет марки в {pos["name"]}')
+    if no_mark:
+        response = komtet.send_komtet(check)
+        result = response.json()
+        err = []
+        pprint(f'Результат: {result}')
+        try:
+            check_id = result['uuid']
+            komtet_id = result['id']
+            print(f'Заказ {order_id} принят без ошибки, komtet_id: {komtet_id}')
+            add_lib.add_check_db(str(order_id), check_id, intent)
+        except Exception:
+            error_massage = result['title']
+            check_id = result['task']['uuid']
+            komtet_id = result['task']['id']
+            print(f'Заказ {order_id} принят c ошибкой, {error_massage}, komtet_id: {komtet_id}')
+            add_lib.add_check_db(str(order_id), check_id, intent, error_massage)
 
-    sleep(15)
-    try:
-        check_status = komtet.get_check_status(komtet_id)
-    except Exception:
-        print(f'Не удалось запросить реквизиты чека заказа {order_id}, komtet_id: {komtet_id}')
-    try:
-        # if check_status['fpd'] != None:
-        add_lib.add_check_db_full(check_status['ecr_reg_number'], check_status['fpd'],
-                                  check_status['check_number'], check_status['check_number_in_shift'],
-                                  check_status['shift_number'], check_status['fn_number'],
-                                  check_status['check_date'], check_status['total'],
-                                  check_status['check_url'], check_id)
-        print(f'Чек заказа № {order_id} успешно пробит, информация добавлена в таблицу Checks')
-    except Exception as ex:
-        print(f'Не удалось загрузить реквизиты чека заказа {order_id}, komtet_id: {komtet_id}')
-        print(f'{ex.args} komtet_id: {komtet_id}')
-        with open("log.txt", "w") as file:
-            file.write(f'{komtet_id} {check_id}\n')
-        err.append(komtet_id)
-    print('-' * 80)
-    return err
+        sleep(12)
+        try:
+            check_status = komtet.get_check_status(komtet_id)
+        except Exception:
+            print(f'Не удалось запросить реквизиты чека заказа {order_id}, komtet_id: {komtet_id}')
+        try:
+            # if check_status['fpd'] != None:
+            add_lib.add_check_db_full(check_status['ecr_reg_number'], check_status['fpd'],
+                                      check_status['check_number'], check_status['check_number_in_shift'],
+                                      check_status['shift_number'], check_status['fn_number'],
+                                      check_status['check_date'], check_status['total'],
+                                      check_status['check_url'], check_id)
+            print(f'Чек заказа № {order_id} успешно пробит, информация добавлена в таблицу Checks')
+        except Exception as ex:
+            print(f'Не удалось загрузить реквизиты чека заказа {order_id}, komtet_id: {komtet_id}')
+            print(f'{ex.args} komtet_id: {komtet_id}')
+            with open("log.txt", "a") as file:
+                file.write(f'{komtet_id} {check_id}\n')
+            err.append(komtet_id)
+        print('-' * 80)
+        return err
+    else:
+        return False
 
 
 # Добавление в промежуточную БД информации о оплате заказа
@@ -109,19 +123,32 @@ def write_payments(order_id):
 
 
 def mass_check():
+    print(strftime('%H:%M:%S', localtime()))
+    punched = 0
     orders = get_lib.get_orders_for_checks()
     # print(orders)
     start_time = time()
     count = 0
     check_errors = []
-    for order_id in orders[0:100]:
+    print(f'В очереди {len(orders)} чеков')
+    for order_id in orders:
+    # for order_id in orders[0:3000]:
+        sleep(1)
         count += 1
         print(f'Итерация {count}, Заказ номер: {order_id}')
         write_payments(order_id)
-        check_error = check_type(order_id, 'sell')
-        print(check_error)
-        if len(check_error) != 0:
-            check_errors.append(check_error)
+        if check_type(order_id, 'sell'):
+            sleep(1)
+            check_error = check_type(order_id, 'sell')
+            print(check_error)
+            if len(check_error) != 0:
+                check_errors.append(check_error)
+        else:
+            print('Заказ с маркой')
+            print(80*'-')
+            punched += 1
+            continue
+    print(f'Не пробито {punched} из {count}')
     print(check_errors)
     # if len(check_errors) != 0:
     #     for err in check_errors:
@@ -131,7 +158,7 @@ def mass_check():
     #                                 check_status['shift_number'], check_status['fn_number'],
     #                                 check_status['check_date'], check_status['total'],
     #                                 check_status['check_url'], 'd40e2979-b6e3-4594-b426-e86cdba83f36')
-    print(f'Время выполнения: {time() - start_time}')
+    print(f'{strftime("%H:%M:%S", localtime())}, Время выполнения: {time() - start_time}')
 
 
 # Цикл пробития

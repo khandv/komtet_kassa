@@ -185,6 +185,6 @@ if __name__ == '__main__':
     # print(get_order_id_by_sber_id('9a820daa-d4a9-7685-84f6-b327020c5ad7'))
     # print(datetime.fromtimestamp(1639057669192 / 1000))
     # pprint(get_goods_of_order(333802))
-    pprint(get_mark('7F6F979F-559F-4B4F-BC5F-2ED7FE6876D3'))
-    for mark in get_mark('7F6F979F-559F-4B4F-BC5F-2ED7FE6876D3'):
+    pprint(get_mark('6AE00908-18D5-4B90-88A8-63E4D5B0DE7B'))
+    for mark in get_mark('6AE00908-18D5-4B90-88A8-63E4D5B0DE7B'):
         print(mark_base64(mark[0]))

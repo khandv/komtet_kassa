@@ -12,7 +12,7 @@ def configure_check(order_id, intent):
     details = get_lib.get_order_details(order_id)
     goods = get_lib.get_goods_of_order(order_id)
     check = {'intent': intent,
-             'external_id': str(order_id) + '-' + intent + '-3',
+             'external_id': str(order_id) + '-' + intent,
              'sno': 0,
              'user': 'it-service@fguppromservis.ru' if test else get_lib.get_email(order_id),
              'positions': [],
@@ -25,7 +25,11 @@ def configure_check(order_id, intent):
         if good[-1] != '':
             print(good[-1])
             for mark in get_lib.get_mark(good[-1]):
-                code = get_lib.mark_base64(mark[0])
+                if '(21)' in mark[0]:
+                    code = mark[0][:29]
+                else:
+                    code = mark[0][:21]
+                # code = get_lib.mark_base64(mark[0])
                 # code = mark[0][2:25].replace('21', '') if mark[0][0:2] == '01' else mark[0][0:21]
                 item = {'id': good[0],
                         'name': good[1],
@@ -33,7 +37,7 @@ def configure_check(order_id, intent):
                         'quantity': mark[1],
                         'total': good[2] * mark[1],
                         'vat': str(good[5]),
-                        'nomenclature_code': {'code': mark[0]},
+                        'nomenclature_code': {'code': code},
                         'supplier_info': {'phones': [good[8], ], 'name': good[9].strip(), 'inn': good[10].strip()}
                         if good[7] == 1 else {},
                         'calculation_method': 'full_payment',
@@ -115,6 +119,7 @@ def mass_check():
     count = 0
     check_errors = []
     for order_id in orders[0:100]:
+        sleep(1)
         count += 1
         print(f'Итерация {count}, Заказ номер: {order_id}')
         write_payments(order_id)
@@ -152,11 +157,12 @@ def typing():
 
 
 if __name__ == '__main__':
-    # pprint(configure_check(334478, 'sell'))
-    # write_payments(329237)
+    pprint(configure_check(334230, 'sell'))
+    # write_payments(334230)
+    # check_type(334230, 'sell')
     # typing()
     # print(strftime('%H:%M:%S', localtime()))
-    mass_check()
+    # mass_check()
     # check_status = komtet.get_check_status(106416664)
     # pprint(check_status)
     # add_lib.add_check_db_full(check_status['ecr_reg_number'], check_status['fpd'],
@@ -164,4 +170,4 @@ if __name__ == '__main__':
     #                           check_status['shift_number'], check_status['fn_number'],
     #                           check_status['check_date'], check_status['total'],
     #                           check_status['check_url'], 'd40e2979-b6e3-4594-b426-e86cdba83f36')
-    # check_type(333704, 'sell')
+
