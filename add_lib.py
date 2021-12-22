@@ -14,16 +14,17 @@ order_status = {0: 'Нет оплаты',
 
 # Добавление в базу данных информации о пробитом чеке / ВЫПОЛНЕНО
 def add_check_db(order_id, check_id, type_check='Приход', error=''):
-    try:
-        connection = pymysql.connect(**mysql_settings)
-    except Exception as error:
-        print('Не удалось подключиться к БД\nОтвет сервера: ', error)
     sql = f'insert into u0752174_delfin_exchange.Checks(order_id, check_id,type, error) \
             values({order_id}, "{check_id}", "{type_check}", "{error}")'
-    with connection:
-        cursor = connection.cursor()
-        cursor.execute(sql)
-        connection.commit()
+    # noinspection PyBroadException
+    try:
+        connection = pymysql.connect(**mysql_settings)
+        with connection:
+            cursor = connection.cursor()
+            cursor.execute(sql)
+            connection.commit()
+    except Exception as error:
+        print('Не удалось подключиться к БД\nОтвет сервера: ', error)
 
 
 # Записывает транзакцию в промежуточную базу данных / Проверено
@@ -31,8 +32,9 @@ def write_payment(sber_id):
     order_id = get_lib.get_order_id_by_sber_id(sber_id)
     payment_details = rbs.get_order_from_sber(sber_id)
     if payment_details['errorCode'] == '0':
-        connection = pymysql.connect(**mysql_settings)
+        # noinspection PyBroadException
         try:
+            connection = pymysql.connect(**mysql_settings)
             with connection:
                 with connection.cursor() as cursor:
                     sql = f"insert into u0752174_delfin_exchange.payments \
@@ -64,8 +66,9 @@ def write_payment(sber_id):
 def add_check_db_full(ecr_reg_number, fpd, check_number,
                       check_number_in_shift, shift_number,
                       fn_number, check_date, total, check_url, check_id):
-    connection = pymysql.connect(**mysql_settings)
+    # noinspection PyBroadException
     try:
+        connection = pymysql.connect(**mysql_settings)
         with connection:
             with connection.cursor() as cursor:
                 sql = f'update u0752174_delfin_exchange.Checks \

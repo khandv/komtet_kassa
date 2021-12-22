@@ -7,6 +7,16 @@ def verif_weight(quantity):
         return True
 
 
+# Приведение марки к нормальному виду.
+def normal_mark(mark):
+    if mark.find('01') == 0:
+        return mark[:25]
+    elif mark.find('(01)') == 0:
+        return mark[:29]
+    else:
+        return mark[:21]
+
+
 # Генерация HEX вида кода марки
 def mark_to_tag(mark_code_raw):
     for i in ('(21)', '(01)'):
@@ -30,4 +40,4 @@ def mark_to_tag(mark_code_raw):
 
 
 if __name__ == '__main__':
-    pass
+    print(normal_mark('010460026601477121r7K7-r7800512900093upya24010117816'))

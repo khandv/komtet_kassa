@@ -5,12 +5,15 @@ from pprint import pprint
 
 # запрос в сбер по sber_id
 def get_order_from_sber(sber_id):
-    url = 'https://securepayments.sberbank.ru/payment/rest/getOrderStatusExtended.do'
-    params = {'orderId': sber_id,
-              'userName': settings.sb_login,
-              'password': settings.sb_password}
-    req = requests.get(url, params=params)
-    return req.json()
+    try:
+        url = 'https://securepayments.sberbank.ru/payment/rest/getOrderStatusExtended.do'
+        params = {'orderId': sber_id,
+                  'userName': settings.sb_login,
+                  'password': settings.sb_password}
+        req = requests.get(url, params=params)
+        return req.json()
+    except Exception as error:
+        print('Нет ответа от сервера сбербанка', error)
 
 
 # Запрос возврата средств оплаты заказа. используетс при возврате
