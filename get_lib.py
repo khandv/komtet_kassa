@@ -29,10 +29,9 @@ def get_orders_for_checks():
         where LAST_STATE = 1 and STATUS_ORDER = 3 and order_id > 110 and order_id not in \
         (select order_id from u0752174_delfin_exchange.Checks);'
     connection = pymysql.connect(**mysql_settings)
-    with connection:
-        with connection.cursor() as cursor:
-            cursor.execute(sql)
-            orders = cursor.fetchall()
+    with connection.cursor() as cursor:
+        cursor.execute(sql)
+        orders = cursor.fetchall()
     return [x[0] for x in orders]
 
 
@@ -44,12 +43,11 @@ def get_order_details(order_id):
             FROM u0752174_delfin_exchange.oc_order_starta \
             where order_id = {order_id};'
     connection = pymysql.connect(**mysql_settings)
-    with connection:
-        with connection.cursor() as cursor:
-            cursor.execute(sql)
-            if cursor.rowcount == 0:
-                raise Exception('Отсутствует информация о заказе')
-            return cursor.fetchone()
+    with connection.cursor() as cursor:
+        cursor.execute(sql)
+        if cursor.rowcount == 0:
+            raise Exception('Отсутствует информация о заказе')
+        return cursor.fetchone()
 
 
 # Получение магазина
@@ -59,10 +57,9 @@ def get_shop(shop_id):
             from u0752174_delfin_exchange.oc_store_category \
             where category_id = {shop_id};'
     connection = pymysql.connect(**mysql_settings)
-    with connection:
-        with connection.cursor() as cursor:
-            cursor.execute(sql)
-            return cursor.fetchone()
+    with connection.cursor() as cursor:
+        cursor.execute(sql)
+        return cursor.fetchone()
 
 
 # Получение региона
@@ -72,10 +69,9 @@ def get_region(region_id):
             from u0752174_delfin_exchange.oc_store_category \
             where category_id = {region_id};'
     connection = pymysql.connect(**mysql_settings)
-    with connection:
-        with connection.cursor() as cursor:
-            cursor.execute(sql)
-            return cursor.fetchone()
+    with connection.cursor() as cursor:
+        cursor.execute(sql)
+        return cursor.fetchone()
 
 
 # Получение адреса эл.почты покупателя из БД сайта
@@ -88,10 +84,9 @@ def get_email(order_id):
             from u0752174_fsin_new.b_sale_order \
             where ID = {order_id});'
     connection = pymysql.connect(**mysql_settings)
-    with connection:
-        with connection.cursor() as cursor:
-            cursor.execute(sql)
-            return cursor.fetchone()[0]
+    with connection.cursor() as cursor:
+        cursor.execute(sql)
+        return cursor.fetchone()[0]
 
 
 # Получение статуса заказа из БД сайта
@@ -101,10 +96,9 @@ def get_status_order(order_id):
             FROM u0752174_fsin_new.b_sale_order \
             where ID = {order_id}'
     connection = pymysql.connect(**mysql_settings)
-    with connection:
-        with connection.cursor() as cursor:
-            cursor.execute(sql)
-            status_order = cursor.fetchone()[0]
+    with connection.cursor() as cursor:
+        cursor.execute(sql)
+        status_order = cursor.fetchone()[0]
     if status_order == 'P':
         return 'В работе'
     if status_order == 'F':
@@ -120,10 +114,9 @@ def get_sber_id(order_id):
             FROM u0752174_fsin_new.b_sale_order_props_value \
             where ORDER_ID = {order_id} and ORDER_PROPS_ID = 10;'
     connection = pymysql.connect(**mysql_settings)
-    with connection:
-        with connection.cursor() as cursor:
-            cursor.execute(sql)
-            return cursor.fetchone()[0]
+    with connection.cursor() as cursor:
+        cursor.execute(sql)
+        return cursor.fetchone()[0]
 
 
 # Получение информации о чеках заказа (вывод - список словарей чеков)
@@ -133,10 +126,9 @@ def get_checks_order(order_id):
             from u0752174_delfin_exchange.Checks \
             where order_id = {order_id};'
     connection = pymysql.connect(**mysql_settings)
-    with connection:
-        with connection.cursor() as cursor:
-            cursor.execute(sql)
-            check_from_db = cursor.fetchall()
+    with connection.cursor() as cursor:
+        cursor.execute(sql)
+        check_from_db = cursor.fetchall()
     check_list = []
     for i in check_from_db:
         if i[2] is not None:
@@ -157,10 +149,9 @@ def get_order_id_by_sber_id(sber_id):
             from u0752174_fsin_new.b_sale_order_props_value \
             where VALUE = "{sber_id}"'
     connection = pymysql.connect(**mysql_settings)
-    with connection:
-        with connection.cursor() as cursor:
-            cursor.execute(sql)
-            return cursor.fetchone()[0]
+    with connection.cursor() as cursor:
+        cursor.execute(sql)
+        return cursor.fetchone()[0]
 
 
 # Получение товаров из промежуточной БД, возвращает кортеж из кортежей товаров
@@ -171,10 +162,9 @@ def get_goods_of_order(order_id):
             FROM u0752174_delfin_exchange.oc_order_products_starta \
             where quantity > 0 and order_id = {order_id} and ischange = 1'
     connection = pymysql.connect(**mysql_settings)
-    with connection:
-        with connection.cursor() as cursor:
-            cursor.execute(sql)
-            return cursor.fetchall()
+    with connection.cursor() as cursor:
+        cursor.execute(sql)
+        return cursor.fetchall()
 
 
 # Получение кода марикровки по guid продукта, возвращает кортеж кортежей марка + количество
@@ -184,10 +174,9 @@ def get_mark(product_guid):
             from u0752174_delfin_exchange.oc_order_marks_starta \
             where ORDER_PRODUCT_GUID = "{product_guid}"'
     connection = pymysql.connect(**mysql_settings)
-    with connection:
-        with connection.cursor() as cursor:
-            cursor.execute(sql)
-            result = cursor.fetchall()
+    with connection.cursor() as cursor:
+        cursor.execute(sql)
+        result = cursor.fetchall()
     marks = list(list(res) for res in result)
     return marks
 
