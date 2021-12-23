@@ -28,16 +28,6 @@ def get_check_status(check_id):
                'Authorization': 'axTea5',
                'X-HMAC-Signature': signature}
     a = json.loads(requests.get(url=url, headers=headers).content)
-    # print(a)
-    # print(a['state'])
-    # print(a['fiscal_data']['rn'])
-    # print(int(a['fiscal_data']['fp']))
-    # print(int(a['fiscal_data']['i']))
-    # print(int(int(a['fiscal_data']['shn'])))
-    # print(int(a['fiscal_data']['fn']))
-    # print(int(a['fiscal_data']['sh']))
-    # print(a['fiscal_data']['t'])
-    # print(float(a['fiscal_data']['s']))
     if a['state'] == 'done':
         # вытаскиваем инфу о чеке из ответа, формируем словарь res
         ecr_registration_number = a['fiscal_data']['rn']
@@ -58,7 +48,7 @@ def get_check_status(check_id):
                'check_date': datetime.datetime.strptime(check_date, '%Y%m%dT%H%M'),
                'total': total,
                'check_url': check_url}
-        print('Чек сформирован успешно')
+        # print('Чек сформирован успешно')
         return res
 
 

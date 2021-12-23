@@ -79,6 +79,7 @@ def check_type(order_id, intent):
         result = response.json()
         err = []
         pprint(f'Результат: {result}')
+        # noinspection PyBroadException
         try:
             check_id = result['uuid']
             komtet_id = result['id']
@@ -92,6 +93,7 @@ def check_type(order_id, intent):
             add_lib.add_check_db(str(order_id), check_id, intent, error_massage)
 
         sleep(12)
+        # noinspection PyBroadException
         try:
             check_status = komtet.get_check_status(komtet_id)
         except Exception:
