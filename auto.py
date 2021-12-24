@@ -85,7 +85,9 @@ def check_type(order_id, intent):
         check_id = result['task']['uuid']
         komtet_id = result['task']['id']
         print(f'Заказ {order_id} принят c ошибкой, {error_massage}, komtet_id: {komtet_id}')
-        add_lib.add_check_db(str(order_id), check_id, intent, error_massage)
+        # add_lib.add_check_db(str(order_id), check_id, intent, error_massage)
+        print('-' * 80)
+        exit()
     sleep(7)
     while True:
         check_status = komtet.get_check_status(komtet_id)
@@ -95,7 +97,7 @@ def check_type(order_id, intent):
                                       check_status['shift_number'], check_status['fn_number'],
                                       check_status['check_date'], check_status['total'],
                                       check_status['check_url'], check_id)
-            print(f'Чек заказа № {order_id} успешно пробит, информация добавлена в таблицу Checks')
+            print(f'Информация по чеку заказа № {order_id} добавлена в таблицу Checks')
             break
         else:
             # print('Чек еще не пробит')
@@ -143,8 +145,8 @@ def typing():
 if __name__ == '__main__':
     # pprint(configure_check(334478, 'sell'))
     # write_payments(329237)
-    typing()
+    # typing()
     # print(strftime('%H:%M:%S', localtime()))
     # mass_check()
     # pprint(check_status)
-    # check_type(333704, 'sell')
+    check_type(334562, 'sell')

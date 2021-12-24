@@ -16,10 +16,15 @@ def retry(max_tries):
                 except Exception:
                     if n == max_tries:
                         raise
-
         return wrapper
-
     return decorator
+
+
+order_status = {0: 'Нет оплаты',
+                1: "Холдирование",
+                2: "Выполнено",
+                3: "Отмена",
+                4: "Возврат"}
 
 
 # запрос в сбер по sber_id

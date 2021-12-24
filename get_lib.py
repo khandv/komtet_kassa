@@ -1,8 +1,8 @@
 import pymysql
 import base64
-# from pprint import pprint
 from settings import mysql_settings
 import functools
+# from pprint import pprint
 
 
 # Этот декоратор заново запускает функцию в случае возникновения исключений. Кол-во максимум = max_tries
@@ -122,7 +122,8 @@ def get_sber_id(order_id):
 # Получение информации о чеках заказа (вывод - список словарей чеков)
 @retry(max_tries=100)
 def get_checks_order(order_id):
-    sql = f'select type, check_id, fd_number, number_in_shift, shift_number, date_time, total \
+    sql = f'select type, check_id, fd_number, number_in_shift, \
+            shift_number, date_time, total, url \
             from u0752174_delfin_exchange.Checks \
             where order_id = {order_id};'
     connection = pymysql.connect(**mysql_settings)
@@ -137,7 +138,8 @@ def get_checks_order(order_id):
                           'number_in_shift': i[3],
                           'shift_number': i[4],
                           'date_time': i[5],
-                          'total': i[6]}
+                          'total': i[6],
+                          'url': i[7]}
             check_list.append(check_dict)
     return check_list
 

@@ -31,7 +31,7 @@ def retry(max_tries):
 
 # Добавление в базу данных информации о пробитом чеке / ВЫПОЛНЕНО
 @retry(max_tries=100)
-def add_check_db(order_id, check_id, type_check='Приход', error=''):
+def add_check_db(order_id, check_id, type_check='Sell', error=''):
     sql = f'insert into u0752174_delfin_exchange.Checks(order_id, check_id,type, error) \
             values({order_id}, "{check_id}", "{type_check}", "{error}")'
     connection = pymysql.connect(**mysql_settings)
