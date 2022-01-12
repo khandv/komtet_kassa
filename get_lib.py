@@ -20,6 +20,18 @@ def retry(max_tries):
         return wrapper
     return decorator
 
+def connection():
+    # Настройки подключения к базе данных
+    settings = {'host': '31.31.198.53',
+                'database': 'u0752174_fsin_new',
+                'user': 'u0752174_site_ex',
+                'password': 'L7y7L1c6',
+                'use_unicode': True}
+    try:
+        connection = pymysql.connect(**settings)
+    except Exception as error:
+        print('Не удалось подключиться к БД\nОтвет сервера: ', error)
+    return connection
 
 # Получение списка заказов для пробития
 @retry(max_tries=100)

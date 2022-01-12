@@ -1,24 +1,16 @@
 import hmac, hashlib
 import requests
 import json
+import settings
 from settings import mysql_settings
+import base64
 import pymysql
+from pprint import pprint
 
 # url = 'https://kassa.komtet.ru/api/shop/v1/'
 # group_code = '12926'
 
-def connection():
-    # Настройки подключения к базе данных
-    settings = {'host': '31.31.198.53',
-                'database': 'u0752174_fsin_new',
-                'user': 'u0752174_site_ex',
-                'password': 'L7y7L1c6',
-                'use_unicode': True}
-    try:
-        connection = pymysql.connect(**settings)
-    except Exception as error:
-        print('Не удалось подключиться к БД\nОтвет сервера: ', error)
-    return connection
+
 
 def get_orders():
     sql = 'select order_id \
@@ -30,23 +22,22 @@ def get_orders():
     orders = cursor.fetchall()
     return [x[0] for x in orders]
 
-def add_check_db_full(ecr_reg_number, fpd, check_number,
-                      check_number_in_shift, shift_number,
-                      fn_number, check_date, total, check_url):
-    try:
-        connection = pymysql.connect(**mysql_settings)
-    except Exception as error:
-        print('Не удалось подключиться к БД\nОтвет сервера: ', error)
-    sql = f'update u0752174_delfin_exchange.Checks \
-            set ecr_reg_number = "{ecr_reg_number}", fpd = "{fpd}", fd_number = {check_number}, \
-            number_in_shift = {check_number_in_shift}, shift_number = {shift_number}, \
-            fn = "{fn_number}", date_time = {check_date.isoformat()}, total = {total}, \
-            url = "{check_url}" where check_id = "{check_id}"'
-    with connection:
-        cursor = connection.cursor()
-        cursor.execute(sql)
-        connection.commit()
+def get_order_from_sber(sber_id):
+    # try:
+    url = 'https://securepayments.sberbank.ru/payment/rest/getOrderStatusExtended.do'
+    params = {'orderId': sber_id,
+              'userName': settings.sb_login,
+              'password': settings.sb_password}
+    req = requests.get(url, params=params)
+    return req.json()
 
-# print(get_orders())
+def mark_base64(mark):
+    mark_byte = mark.encode('ascii')
+    base64_bytes = base64.b64encode(mark_byte)
+    return base64_bytes.decode('ascii')
+
+
+pprint(mark_base64('04601653025929zJ!sL"4'))
+pprint(get_order_from_sber('942b6e4e-8add-713c-bb86-5c55020c5ad7'))
 
 

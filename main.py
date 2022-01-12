@@ -41,6 +41,9 @@ def processing():
         print('=' * 55, 'Оплаты ' + '=' * 54)
         sber_id = get_lib.get_sber_id(int(order_number_input))
         payment_state = rbs.get_order_from_sber(sber_id)
+        holded_sum = float(payment_state['paymentAmountInfo']['approvedAmount'] / 100)
+        finish_sum = float(payment_state['paymentAmountInfo']['depositedAmount'] / 100)
+        refunded_amount = float(payment_state['paymentAmountInfo']['refundedAmount'] / 100)
         if payment_state['orderStatus'] == 2:
             payment_state_ru = 'Выполнено'
             color_state = Fore.GREEN
@@ -51,16 +54,14 @@ def processing():
             payment_state_ru = 'Отмена'
             color_state = Fore.RED
         if payment_state['orderStatus'] == 4:
-            if order_details.payment.holded_sum == 0:
+            if holded_sum == 0:
                 payment_state_ru = 'Полный возврат'
             else:
                 payment_state_ru = 'Частичный возврат'
             color_state = Fore.CYAN
         print('%-20s%s' % ('Статус', color_state + payment_state_ru + Style.RESET_ALL))
         # Вынимаем и выводим оплаты
-        holded_sum = float(payment_state['paymentAmountInfo']['approvedAmount'] / 100)
-        finish_sum = float(payment_state['paymentAmountInfo']['depositedAmount'] / 100)
-        refunded_amount = float(payment_state['paymentAmountInfo']['refundedAmount'] / 100)
+
         print('%-20s%s' % ('Холдирование', holded_sum))
         print('%-20s%s' % ('Завершение', finish_sum))
         print('%-20s%s' % ('Возврат', refunded_amount))
@@ -105,6 +106,9 @@ def processing():
                     rbs.refund_order(sber_id, finish_sum)
             print(intent_check)
             check_type(order_number_input, intent_check)
+        else:
+            order_details = None
+            continue
 
 
 if __name__ == '__main__':

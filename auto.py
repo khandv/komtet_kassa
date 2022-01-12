@@ -13,7 +13,7 @@ def configure_check(order_id, intent):
         details = get_lib.get_order_details(order_id)
         goods = get_lib.get_goods_of_order(order_id)
         check = {'intent': intent,
-                 'external_id': str(order_id) + '-' + intent + 'work_',
+                 'external_id': str(order_id) + '-' + intent + 'work',
                  'sno': 0,
                  'user': 'it-service@fguppromservis.ru' if test else get_lib.get_email(order_id),
                  'positions': [],
@@ -36,7 +36,7 @@ def configure_check(order_id, intent):
                             'quantity': mark[1],
                             'total': good[2] * mark[1],
                             'vat': str(good[5]),
-                            # 'nomenclature_code': {'code': verification.normal_mark(mark[0])},
+                            'nomenclature_code': {'code': verification.normal_mark(mark[0])},
                             'supplier_info': {'phones': [good[8], ], 'name': good[9].strip(), 'inn': good[10].strip()}
                             if good[7] == 1 else {},
                             'calculation_method': 'full_payment',
@@ -72,6 +72,7 @@ def configure_check(order_id, intent):
 # Пробиваем чеки, заносим данные в промежуточную базу
 def check_type(order_id, intent):
     check = configure_check(order_id, intent)
+    # pprint(check)
     response = komtet.send_komtet(check)
     result = response.json()
     # noinspection PyBroadException
@@ -85,9 +86,9 @@ def check_type(order_id, intent):
         check_id = result['task']['uuid']
         komtet_id = result['task']['id']
         print(f'Заказ {order_id} принят c ошибкой, {error_massage}, komtet_id: {komtet_id}')
-        # add_lib.add_check_db(str(order_id), check_id, intent, error_massage)
-        print('-' * 80)
-        exit()
+        add_lib.add_check_db(str(order_id), check_id, intent, error_massage)
+        # print('-' * 80)
+        # exit()
     sleep(7)
     while True:
         check_status = komtet.get_check_status(komtet_id)
@@ -144,9 +145,11 @@ def typing():
 
 if __name__ == '__main__':
     # pprint(configure_check(334478, 'sell'))
+    # pprint(configure_check(334478, 'sell'))
     # write_payments(329237)
-    # typing()
+    typing()
     # print(strftime('%H:%M:%S', localtime()))
     # mass_check()
     # pprint(check_status)
-    check_type(334562, 'sell')
+    # check_type(334562, 'sell')
+    # check_id = result['uuid']
