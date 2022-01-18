@@ -9,11 +9,12 @@ import verification
 
 # Формируем чек для пробития
 def configure_check(order_id, intent):
+    suffix = 'test' if test else ''
     try:
         details = get_lib.get_order_details(order_id)
         goods = get_lib.get_goods_of_order(order_id)
         check = {'intent': intent,
-                 'external_id': str(order_id) + '-' + intent + 'work',
+                 'external_id': str(order_id) + '-' + intent + suffix,
                  'sno': 0,
                  'user': 'it-service@fguppromservis.ru' if test else get_lib.get_email(order_id),
                  'positions': [],
@@ -36,7 +37,7 @@ def configure_check(order_id, intent):
                             'quantity': mark[1],
                             'total': good[2] * mark[1],
                             'vat': str(good[5]),
-                            'nomenclature_code': {'code': verification.normal_mark(mark[0])},
+                            # 'nomenclature_code': {'code': verification.normal_mark(mark[0])},
                             'supplier_info': {'phones': [good[8], ], 'name': good[9].strip(), 'inn': good[10].strip()}
                             if good[7] == 1 else {},
                             'calculation_method': 'full_payment',

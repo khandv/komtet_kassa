@@ -4,7 +4,7 @@ from re import search
 from auto import check_type
 import get_lib
 import rbs
-# from pprint import pprint
+
 
 def processing():
     init()
@@ -104,7 +104,7 @@ def processing():
             if intent_check == 'sellReturn':
                 if input('Провести возврат на %.2f руб. через банк? ' % finish_sum) == 'Y':
                     rbs.refund_order(sber_id, finish_sum)
-            print(intent_check)
+            # print(intent_check)
             check_type(order_number_input, intent_check)
         else:
             order_details = None

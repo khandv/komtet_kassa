@@ -2,6 +2,7 @@ import settings
 import requests
 from pprint import pprint
 import functools
+import get_lib
 
 
 # Этот декоратор заново запускает функцию в случае возникновения исключений. Кол-во максимум = max_tries
@@ -42,7 +43,7 @@ def get_order_from_sber(sber_id):
 
 
 # Запрос возврата средств оплаты заказа. используетс при возврате
-@retry(max_tries=100)
+# @retry(max_tries=100)
 def refund_order(order_id, amount):
     url = 'https://securepayments.sberbank.ru/payment/rest/refund.do'
     total = int(amount * 100)
@@ -54,5 +55,7 @@ def refund_order(order_id, amount):
 
 
 if __name__ == '__main__':
-    pprint(get_order_from_sber('2bf23569-aa35-7292-a741-8612020c5ad7'))
-    print(get_order_from_sber('2bf23569-aa35-7292-a741-8612020c5ad7')['errorCode'] == '0')
+    # pprint(get_order_from_sber('2bf23569-aa35-7292-a741-8612020c5ad7'))
+    # print(get_order_from_sber('2bf23569-aa35-7292-a741-8612020c5ad7')['errorCode'] == '0')
+    sber_id = get_lib.get_sber_id(int(352425))
+    # pprint(refund_order(sber_id, 145.00))
