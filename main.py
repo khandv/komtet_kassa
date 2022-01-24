@@ -54,10 +54,11 @@ def processing():
             payment_state_ru = 'Отмена'
             color_state = Fore.RED
         if payment_state['orderStatus'] == 4:
-            if holded_sum == 0:
-                payment_state_ru = 'Полный возврат'
-            else:
-                payment_state_ru = 'Частичный возврат'
+            payment_state_ru = 'Возврат'
+            # if holded_sum == 0:
+            #     payment_state_ru = 'Полный возврат'
+            # else:
+            #     payment_state_ru = 'Частичный возврат'
             color_state = Fore.CYAN
         print('%-20s%s' % ('Статус', color_state + payment_state_ru + Style.RESET_ALL))
         # Вынимаем и выводим оплаты
@@ -71,7 +72,8 @@ def processing():
         check_count = 0
 
         for check in checks:
-            print('%-10s%-10.2f %-25s%s' % (check['type_of_check'], check['total'], check['date_time'], check['url']))
+            operation = 'Продажа' if check['type_of_check'] == 'sell' else 'Возврат'
+            print('%-10s%-10.2f %-25s%s' % (operation, check['total'], check['date_time'], check['url']))
             check_count += 1
             check_total = check['total']
 
@@ -83,7 +85,7 @@ def processing():
 
         if check_count == 1:
             print('%-20s%s' % ('Сумма по чеку', check_total))
-        print('%-20s%s' % ('Переплата', delta))
+            print('%-20s%s' % ('Переплата', delta))
 
         if delta > 0:
             if input('Провести возврат на сумму %.2f?: ' % delta) == 'Y':

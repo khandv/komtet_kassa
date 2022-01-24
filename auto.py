@@ -37,7 +37,7 @@ def configure_check(order_id, intent):
                             'quantity': mark[1],
                             'total': good[2] * mark[1],
                             'vat': str(good[5]),
-                            # 'nomenclature_code': {'code': verification.normal_mark(mark[0])},
+                            'nomenclature_code': {'code': verification.normal_mark(mark[0])},
                             'supplier_info': {'phones': [good[8], ], 'name': good[9].strip(), 'inn': good[10].strip()}
                             if good[7] == 1 else {},
                             'calculation_method': 'full_payment',
