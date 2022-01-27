@@ -1,6 +1,7 @@
 /venv/
 /.idea/
 /marks/
+__pycache__/
 test.py
 settings.py
 Авточеки.cmd
