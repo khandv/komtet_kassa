@@ -2,6 +2,7 @@ from colorama import Fore, Style
 from colorama import init
 from re import search
 from auto import check_type
+from pprint import pprint
 import get_lib
 import rbs
 
@@ -18,10 +19,12 @@ def processing():
         elif int(order_number_input) == 0:
             exit()
         order_details = get_lib.get_order_details(int(order_number_input))
+        # pprint(order_details)
         shop = get_lib.get_shop(order_details[8])
         region = get_lib.get_region(shop[1])
         # Печатаем детали заказа
         print('%-20s%s' % ('Заказ №', order_details[0]))
+        print('%-20s%s' % ('Дата заказа', order_details[4]))
         print('%-20s%s' % ('Статус', get_lib.get_status_order(int(order_number_input))))
         print('%-20s%s' % ('Клиент', order_details[1]))
         print('%-20s%s' % ('Получатель', order_details[2]))
@@ -55,7 +58,7 @@ def processing():
             color_state = Fore.RED
         if payment_state['orderStatus'] == 4:
             payment_state_ru = 'Возврат'
-            # if holded_sum == 0:
+            # if holded_sum != 0:
             #     payment_state_ru = 'Полный возврат'
             # else:
             #     payment_state_ru = 'Частичный возврат'

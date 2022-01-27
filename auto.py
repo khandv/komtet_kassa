@@ -31,6 +31,7 @@ def configure_check(order_id, intent):
                 for mark in get_lib.get_mark(good[-1]):
                     # code = get_lib.mark_base64(mark[0])
                     # code = mark[0][2:25].replace('21', '') if mark[0][0:2] == '01' else mark[0][0:21]
+                    print(verification.normal_mark(mark[0]))
                     item = {'id': good[0],
                             'name': good[1],
                             'price': good[2],
@@ -145,7 +146,7 @@ def typing():
 
 
 if __name__ == '__main__':
-    # pprint(configure_check(334478, 'sell'))
+    # pprint(configure_check(368947, 'sell'))
     # pprint(configure_check(334478, 'sell'))
     # write_payments(329237)
     typing()
