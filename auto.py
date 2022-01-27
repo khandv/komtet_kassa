@@ -146,10 +146,10 @@ def typing():
 
 
 if __name__ == '__main__':
-    # pprint(configure_check(368947, 'sell'))
+    pprint(configure_check(369594, 'sell'))
     # pprint(configure_check(334478, 'sell'))
     # write_payments(329237)
-    typing()
+    # typing()
     # print(strftime('%H:%M:%S', localtime()))
     # mass_check()
     # pprint(check_status)
