@@ -69,7 +69,7 @@ def processing():
         print('%-20s%s' % ('Холдирование', holded_sum))
         print('%-20s%s' % ('Завершение', finish_sum))
         print('%-20s%s' % ('Возврат', refunded_amount))
-        print('%-20s%s' % ('Разница', holded_sum - finish_sum))
+        print('%-20s%s' % ('Разница', round((holded_sum - finish_sum), 2)))
         print('=' * 55, 'Чеки ' + '=' * 56)
         checks = get_lib.get_checks_order(int(order_number_input))
         check_count = 0

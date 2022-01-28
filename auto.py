@@ -46,7 +46,7 @@ def configure_check(order_id, intent):
                     # print(f'{good[1]}, {verification.normal_mark(mark[0])}')
                     check['positions'].append(item)
                     sum_goods += item['total']
-                    with open(f"marks_{strftime('%d-%m-%Y', localtime())}.txt", "a") as file:
+                    with open(f"marks/marks_{strftime('%d-%m-%Y', localtime())}.txt", "a") as file:
                         file.write(f'{verification.normal_mark(mark[0])}\n')
             else:
                 item = {'id': good[0],
