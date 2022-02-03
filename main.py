@@ -1,6 +1,5 @@
 from colorama import Fore, Style
 from colorama import init
-from re import search
 from auto import check_type
 from pprint import pprint
 import get_lib
@@ -13,8 +12,10 @@ def processing():
         # Ввод номера заказа
         order_number_input = input("Введите номер заказа ('0'- выход) : ")
         # Проверка на пустой ввод, ввод не цифры и 0 - выход
-        if search(r'\D+', order_number_input) or order_number_input == '':
-            print(Fore.RED + 'Номер заказа состоит только из цифр.' + Style.RESET_ALL)
+        if order_number_input == '':
+            continue
+        elif (not order_number_input.isdigit()) or (not len(order_number_input) in [1, 6]):
+            print(Fore.RED + 'Номер заказа состоит из шести цифр.' + Style.RESET_ALL)
             continue
         elif int(order_number_input) == 0:
             exit()
@@ -25,10 +26,16 @@ def processing():
         # Печатаем детали заказа
         print('%-20s%s' % ('Заказ №', order_details[0]))
         print('%-20s%s' % ('Дата заказа', order_details[4]))
-        print('%-20s%s' % ('Статус', get_lib.get_status_order(int(order_number_input))))
+        try:
+            print('%-20s%s' % ('Статус', get_lib.get_status_order(int(order_number_input))))
+        except:
+            print('%-20s%s' % ('Статус', 'Невозможно получить с сайта.'))
         print('%-20s%s' % ('Клиент', order_details[1]))
         print('%-20s%s' % ('Получатель', order_details[2]))
-        print('%-20s%s' % ('E-mail', get_lib.get_email(int(order_number_input))))
+        try:
+            print('%-20s%s' % ('E-mail', get_lib.get_email(int(order_number_input))))
+        except:
+            print('%-20s%s' % ('E-mail', 'Невозможно получить с сайта'))
         print('%-20s%s' % ('Регион', region[0]))
         print('%-20s%s' % ('Магазин', shop[0]))
         print('=' * 55, 'Товар ' + '=' * 55)

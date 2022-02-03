@@ -102,4 +102,8 @@ def to_json(order, intent = 'sell'):
 # write_payments(get_check_for_payments())
 # pprint(get_order_from_sber('942b6e4e-8add-713c-bb86-5c55020c5ad7'))
 
-to_json(369594)
+# to_json(369594)
+
+k = 8
+k *= 2
+print(k)
