@@ -32,7 +32,7 @@ def retry(max_tries):
 # Добавление в базу данных информации о пробитом чеке / ВЫПОЛНЕНО
 @retry(max_tries=100)
 def add_check_db(order_id, check_id, type_check='Sell', error=''):
-    sql = f'insert into u0752174_delfin_exchange.Checks(order_id, check_id,type, error) \
+    sql = f'insert into admin_exchange.Checks(order_id, check_id,type, error) \
             values({order_id}, "{check_id}", "{type_check}", "{error}")'
     connection = pymysql.connect(**mysql_settings)
     # with connection:
@@ -51,7 +51,7 @@ def write_payment(sber_id):
         connection = pymysql.connect(**mysql_settings)
         # with connection:
         with connection.cursor() as cursor:
-            sql = f"insert into u0752174_delfin_exchange.payments \
+            sql = f"insert into admin_exchange.payments \
                         (status, date_time, transaction, hold, \
                         finish, refund, order_id) \
                     values( \
@@ -82,7 +82,7 @@ def add_check_db_full(ecr_reg_number, fpd, check_number,
     connection = pymysql.connect(**mysql_settings)
     # with connection:
     with connection.cursor() as cursor:
-        sql = f'update u0752174_delfin_exchange.Checks \
+        sql = f'update admin_exchange.Checks \
                     set ecr_reg_number = "{ecr_reg_number}", fpd = "{fpd}", fd_number = {check_number}, \
                     number_in_shift = {check_number_in_shift}, shift_number = {shift_number}, \
                     fn = "{fn_number}", date_time = "{check_date}", total = {total}, \

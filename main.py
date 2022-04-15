@@ -4,10 +4,13 @@ from auto import check_type
 from pprint import pprint
 import get_lib
 import rbs
+import os
 
 
 def processing():
     init()
+    if not os.path.exists('marks'):
+        os.mkdir('marks')
     while True:
         # Ввод номера заказа
         order_number_input = input("Введите номер заказа ('0'- выход) : ")

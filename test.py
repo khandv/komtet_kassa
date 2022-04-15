@@ -93,17 +93,13 @@ def write_payments_test(check):
     # pprint(order_from_sber)
 
 def to_json(order, intent = 'sell'):
-    file_name = f'checks/{order}_{intent}.json'
+    file_name = f'checks/{order}_{intent}work.json'
     with open(file_name, 'w', encoding='utf-8') as file:
-        json.dump(auto.configure_check(369594, intent), file, indent=4, ensure_ascii=False)
+        json.dump(auto.configure_check(order, intent), file, indent=4, ensure_ascii=False)
 
 
 # pprint(write_payments_test(338555))
 # write_payments(get_check_for_payments())
 # pprint(get_order_from_sber('942b6e4e-8add-713c-bb86-5c55020c5ad7'))
 
-# to_json(369594)
-
-k = 8
-k *= 2
-print(k)
+to_json(429771)

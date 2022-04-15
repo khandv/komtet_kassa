@@ -21,14 +21,8 @@ def retry(max_tries):
     return decorator
 
 def connection():
-    # Настройки подключения к базе данных
-    settings = {'host': '31.31.198.53',
-                'database': 'u0752174_fsin_new',
-                'user': 'u0752174_site_ex',
-                'password': 'L7y7L1c6',
-                'use_unicode': True}
     try:
-        connection = pymysql.connect(**settings)
+        connection = pymysql.connect(**mysql_settings)
     except Exception as error:
         print('Не удалось подключиться к БД\nОтвет сервера: ', error)
     return connection
@@ -37,9 +31,9 @@ def connection():
 @retry(max_tries=100)
 def get_orders_for_checks():
     sql = 'select order_id \
-        from u0752174_delfin_exchange.oc_order_starta \
+        from admin_exchange.oc_order_starta \
         where LAST_STATE = 1 and STATUS_ORDER = 3 and order_id > 110 and order_id not in \
-        (select order_id from u0752174_delfin_exchange.Checks);'
+        (select order_id from admin_exchange.Checks);'
     connection = pymysql.connect(**mysql_settings)
     with connection.cursor() as cursor:
         cursor.execute(sql)
@@ -52,7 +46,7 @@ def get_orders_for_checks():
 def get_order_details(order_id):
     sql = f'SELECT order_id, FIO, FIO_RECIPIENT, RECIPIENT_BIRTH, \
             DATE_ORDER, STATUS_ORDER, TEXT_CANCEL, TOTAL, ID_SHOP \
-            FROM u0752174_delfin_exchange.oc_order_starta \
+            FROM admin_exchange.oc_order_starta \
             where order_id = {order_id};'
     connection = pymysql.connect(**mysql_settings)
     with connection.cursor() as cursor:
@@ -66,7 +60,7 @@ def get_order_details(order_id):
 @retry(max_tries=100)
 def get_shop(shop_id):
     sql = f'select name, parent_id \
-            from u0752174_delfin_exchange.oc_store_category \
+            from admin_exchange.oc_store_category \
             where category_id = {shop_id};'
     connection = pymysql.connect(**mysql_settings)
     with connection.cursor() as cursor:
@@ -78,7 +72,7 @@ def get_shop(shop_id):
 @retry(max_tries=100)
 def get_region(region_id):
     sql = f'select name \
-            from u0752174_delfin_exchange.oc_store_category \
+            from admin_exchange.oc_store_category \
             where category_id = {region_id};'
     connection = pymysql.connect(**mysql_settings)
     with connection.cursor() as cursor:
@@ -90,10 +84,10 @@ def get_region(region_id):
 @retry(max_tries=100)
 def get_email(order_id):
     sql = f'select email \
-            from u0752174_fsin_new.b_user \
+            from admin_bitrix.b_user \
             where id in \
             (select user_id \
-            from u0752174_fsin_new.b_sale_order \
+            from admin_bitrix.b_sale_order \
             where ID = {order_id});'
     connection = pymysql.connect(**mysql_settings)
     with connection.cursor() as cursor:
@@ -105,7 +99,7 @@ def get_email(order_id):
 @retry(max_tries=100)
 def get_status_order(order_id):
     sql = f'SELECT STATUS_ID \
-            FROM u0752174_fsin_new.b_sale_order \
+            FROM admin_bitrix.b_sale_order \
             where ID = {order_id}'
     connection = pymysql.connect(**mysql_settings)
     with connection.cursor() as cursor:
@@ -123,7 +117,7 @@ def get_status_order(order_id):
 @retry(max_tries=100)
 def get_sber_id(order_id):
     sql = f'SELECT value \
-            FROM u0752174_fsin_new.b_sale_order_props_value \
+            FROM admin_bitrix.b_sale_order_props_value \
             where ORDER_ID = {order_id} and ORDER_PROPS_ID = 10;'
     connection = pymysql.connect(**mysql_settings)
     with connection.cursor() as cursor:
@@ -136,7 +130,7 @@ def get_sber_id(order_id):
 def get_checks_order(order_id):
     sql = f'select type, check_id, fd_number, number_in_shift, \
             shift_number, date_time, total, url \
-            from u0752174_delfin_exchange.Checks \
+            from admin_exchange.Checks \
             where order_id = {order_id};'
     connection = pymysql.connect(**mysql_settings)
     with connection.cursor() as cursor:
@@ -160,7 +154,7 @@ def get_checks_order(order_id):
 @retry(max_tries=100)
 def get_order_id_by_sber_id(sber_id):
     sql = f'select order_id \
-            from u0752174_fsin_new.b_sale_order_props_value \
+            from admin_bitrix.b_sale_order_props_value \
             where VALUE = "{sber_id}"'
     connection = pymysql.connect(**mysql_settings)
     with connection.cursor() as cursor:
@@ -173,7 +167,7 @@ def get_order_id_by_sber_id(sber_id):
 def get_goods_of_order(order_id):
     sql = f'SELECT DF_CODE, NAME,PRICE, QUANTITY, PRODUCT_SUM, NDS, ISCHANGE, \
             commission, comissioner_phone, comissioner_name, comissioner_inn, ORDER_PRODUCT_GUID \
-            FROM u0752174_delfin_exchange.oc_order_products_starta \
+            FROM admin_exchange.oc_order_products_starta \
             where quantity > 0 and order_id = {order_id} and ischange = 1'
     connection = pymysql.connect(**mysql_settings)
     with connection.cursor() as cursor:
@@ -185,7 +179,7 @@ def get_goods_of_order(order_id):
 @retry(max_tries=100)
 def get_mark(product_guid):
     sql = f'select mark, quantity \
-            from u0752174_delfin_exchange.oc_order_marks_starta \
+            from admin_exchange.oc_order_marks_starta \
             where ORDER_PRODUCT_GUID = "{product_guid}"'
     connection = pymysql.connect(**mysql_settings)
     with connection.cursor() as cursor:

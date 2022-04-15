@@ -9,7 +9,6 @@ import requests
 
 def send_komtet(check):
     url = 'https://kassa.komtet.ru/api/shop/v1/queues/'+str(queue)+'/task'
-    # msg = method + url + body
     msg = 'POST' + url + json.dumps(check)
     signature = hmac.new(secret.encode('utf-8'), msg.encode('utf-8'), digestmod=hashlib.md5).hexdigest()
     headers = {'Content-type': 'application/json',

@@ -5,11 +5,12 @@ import get_lib
 import add_lib
 import komtet
 import verification
+import os
 
 
 # Формируем чек для пробития
 def configure_check(order_id, intent):
-    suffix = 'test' if test else ''
+    suffix = 'test' if test else 'work'
     try:
         details = get_lib.get_order_details(order_id)
         goods = get_lib.get_goods_of_order(order_id)
@@ -31,7 +32,7 @@ def configure_check(order_id, intent):
                 for mark in get_lib.get_mark(good[-1]):
                     # code = get_lib.mark_base64(mark[0])
                     # code = mark[0][2:25].replace('21', '') if mark[0][0:2] == '01' else mark[0][0:21]
-                    print(verification.normal_mark(mark[0]))
+                    # print(verification.normal_mark(mark[0]))
                     item = {'id': good[0],
                             'name': good[1],
                             'price': good[2],
@@ -51,9 +52,9 @@ def configure_check(order_id, intent):
             else:
                 item = {'id': good[0],
                         'name': good[1],
-                        'price': round(good[2], 2),
-                        'quantity': good[3],
-                        'total': good[4],
+                        'price': round(good[2], 3),
+                        'quantity': round(good[3], 3),
+                        'total': int((good[3] * good[2] * 1000)) / 1000,
                         'vat': str(good[5]),
                         'supplier_info': {'phones': [good[8], ], 'name': good[9].strip(), 'inn': good[10].strip()}
                         if good[7] == 1 else {},
@@ -63,7 +64,7 @@ def configure_check(order_id, intent):
                 sum_goods += item['total']
         print(f'Сумма чека: {details[7]}, сумма по товарам: {sum_goods}')
         if sum_goods != details[7]:
-            check['payments'][0]['sum'] = round(float(sum_goods), 2)
+            check['payments'][0]['sum'] = round(float(sum_goods), 3)
             print(f'Сумма чека: {details[7]}, сумма по товарам: {sum_goods}, будет пробита сумма по товарам')
         pprint(f'В чеке {len(check["positions"])} позиции')
         return check
@@ -73,10 +74,13 @@ def configure_check(order_id, intent):
 
 # Пробиваем чеки, заносим данные в промежуточную базу
 def check_type(order_id, intent):
+    if not os.path.exists('marks'):
+        os.mkdir('marks')
     check = configure_check(order_id, intent)
     # pprint(check)
     response = komtet.send_komtet(check)
     result = response.json()
+    # print(result)
     # noinspection PyBroadException
     try:
         check_id = result['uuid']
@@ -94,6 +98,7 @@ def check_type(order_id, intent):
     sleep(7)
     while True:
         check_status = komtet.get_check_status(komtet_id)
+        pprint(check_status)
         if type(check_status) is dict:
             add_lib.add_check_db_full(check_status['ecr_reg_number'], check_status['fpd'],
                                       check_status['check_number'], check_status['check_number_in_shift'],
@@ -141,17 +146,21 @@ def typing():
     while True:
         start_time = strftime('%H:%M:%S', localtime())
         if '04:00:00' < start_time < '23:00:00':
-            mass_check()
+            try:
+                mass_check()
+            except Exception:
+                continue
         sleep(60)
 
 
 if __name__ == '__main__':
-    pprint(configure_check(369594, 'sell'))
+    # pprint(configure_check(369594, 'sell'))
     # pprint(configure_check(334478, 'sell'))
     # write_payments(329237)
-    # typing()
+    typing()
     # print(strftime('%H:%M:%S', localtime()))
     # mass_check()
     # pprint(check_status)
-    # check_type(334562, 'sell')
+    # check_type(369594, 'sell')
+    # check_type(393322, 'sell')
     # check_id = result['uuid']
