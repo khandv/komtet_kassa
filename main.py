@@ -23,7 +23,6 @@ def processing():
         elif int(order_number_input) == 0:
             exit()
         order_details = get_lib.get_order_details(int(order_number_input))
-        # pprint(order_details)
         shop = get_lib.get_shop(order_details[8])
         region = get_lib.get_region(shop[1])
         # Печатаем детали заказа
@@ -103,8 +102,9 @@ def processing():
         if delta > 0:
             if input('Провести возврат на сумму %.2f?: ' % delta) == 'Y':
                 # вызываем метод refund_order из rbs.py (возврат)
-                res = rbs.refund_order(order_details.sber_id, delta)
-                print(res.content)
+                res = rbs.refund_order(sber_id, delta)
+                result = res.content.decode('utf-8')
+                print(result)
 
         if input('Сформировать чек? ') == 'Y':
             intent_check = 'sellReturn' if input('Тип чека:\n1-Приход\n2-Возрат\n?>') == '2' else 'sell'

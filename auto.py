@@ -13,6 +13,7 @@ def configure_check(order_id, intent):
     suffix = 'test' if test else 'work'
     try:
         details = get_lib.get_order_details(order_id)
+        pprint(details)
         goods = get_lib.get_goods_of_order(order_id)
         check = {'intent': intent,
                  'external_id': str(order_id) + '-' + intent + suffix,
@@ -32,14 +33,15 @@ def configure_check(order_id, intent):
                 for mark in get_lib.get_mark(good[-1]):
                     # code = get_lib.mark_base64(mark[0])
                     # code = mark[0][2:25].replace('21', '') if mark[0][0:2] == '01' else mark[0][0:21]
-                    # print(verification.normal_mark(mark[0]))
+                    print(verification.normal_mark(mark[0]))
                     item = {'id': good[0],
                             'name': good[1],
                             'price': good[2],
                             'quantity': mark[1],
                             'total': good[2] * mark[1],
                             'vat': str(good[5]),
-                            'nomenclature_code': {'code': verification.normal_mark(mark[0])},
+                            # 'nomenclature_code': {'code': verification.normal_mark(mark[0])},
+                            'nomenclature_code': {'code': verification.mark_base64(mark[0])},
                             'supplier_info': {'phones': [good[8], ], 'name': good[9].strip(), 'inn': good[10].strip()}
                             if good[7] == 1 else {},
                             'calculation_method': 'full_payment',

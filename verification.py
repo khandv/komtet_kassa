@@ -1,4 +1,5 @@
 from math import modf
+import base64
 
 
 # Проверка весового товара
@@ -15,6 +16,13 @@ def normal_mark(mark):
         return mark[:29]
     else:
         return mark[:21]
+
+
+def mark_base64(mark):
+    mark_ver = normal_mark(mark)
+    mark_byte = mark.encode('ascii')
+    base64_bytes = base64.b64encode(mark_byte)
+    return base64_bytes.decode('ascii')
 
 
 # Генерация HEX вида кода марки
